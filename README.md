@@ -159,9 +159,9 @@ $$
 \dot{V} = -k_V\,\dot{q}\_2^2 \le 0
 $$
 
-To express $\ddot{q}_2$ in terms of $\tau_2$, we eliminate $\ddot{q}_1$ from the
-manipulator equation using the first row ($\tau_1 = 0$) and substitute into the
-second row. Defining $\Delta = \det M(q) = M_{11}M_{22} - M_{12}^2$, this yields:
+To express $\ddot{q}\_2$ in terms of $\tau_2$, we eliminate $\ddot{q}\_1$ from the
+manipulator equation using the first row ( $\tau_1 = 0$ ) and substitute into the
+second row. Defining $\Delta = \det M(q) = M\_{11}M\_{22} - M\_{12}^2$, this yields:
 
 $$
 \tau_2 = -\frac{(k_V\dot{q}\_2 + k_P q_2)\,\Delta + k_D\bigl[M_{21}(H_1+G_1) - M_{11}(H_2+G_2)\bigr]}{k_D M_{11} + (E - E_r)\Delta}
