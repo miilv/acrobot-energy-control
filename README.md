@@ -49,10 +49,10 @@ followed by linear-quadratic regulation (LQR) for terminal stabilization.
 |--------|-------------|------|
 | $q_1$ | Angle of link 1 from horizontal, CCW positive | rad |
 | $q_2$ | Relative angle of link 2 w.r.t. link 1 | rad |
-| $\dot{q}_1$ | Angular velocity of link 1 | rad/s |
-| $\dot{q}_2$ | Angular velocity of link 2 | rad/s |
+| $\dot{q}\_1$ | Angular velocity of link 1 | rad/s |
+| $\dot{q}\_2$ | Angular velocity of link 2 | rad/s |
 
-State vector: $x = [q_1,\; q_2,\; \dot{q}_1,\; \dot{q}_2]^\top$.
+State vector: $x = [q_1,\; q_2,\; \dot{q}\_1,\; \dot{q}\_2]^\top$.
 
 **Equilibria:**
 
@@ -83,39 +83,39 @@ The shoulder torque is identically zero: $\tau_1 = 0$ (underactuated).
 
 The standard manipulator equation is
 
-$$M(q)\,\ddot{q} + C(q,\dot{q})\,\dot{q} + G(q) = \begin{bmatrix} 0 \\ \tau_2 \end{bmatrix}$$
+$$
+M(q)\,\ddot{q} + C(q,\dot{q})\,\dot{q} + G(q) = \begin{bmatrix} 0 \\\\ \tau_2 \end{bmatrix}
+$$
 
 with the following terms:
 
 **Lumped parameters** (for convenience):
 
-$$\alpha_1 = m_1 l_{c1}^2 + m_2 l_1^2 + I_1, \quad
-\alpha_2 = m_2 l_{c2}^2 + I_2, \quad
-\alpha_3 = m_2 l_1 l_{c2}$$
+$$
+\alpha_1 = m_1 l_{c1}^2 + m_2 l_1^2 + I_1, \quad \alpha_2 = m_2 l_{c2}^2 + I_2, \quad \alpha_3 = m_2 l_1 l_{c2}
+$$
 
-$$\beta_1 = (m_1 l_{c1} + m_2 l_1)\,g, \quad
-\beta_2 = m_2 l_{c2}\,g$$
+$$
+\beta_1 = (m_1 l_{c1} + m_2 l_1)\,g, \quad \beta_2 = m_2 l_{c2}\,g
+$$
 
 **Inertia matrix:**
 
-$$M(q) = \begin{bmatrix}
-\alpha_1 + \alpha_2 + 2\alpha_3\cos q_2 & \alpha_2 + \alpha_3\cos q_2 \\
-\alpha_2 + \alpha_3\cos q_2 & \alpha_2
-\end{bmatrix}$$
+$$
+M(q) = \begin{bmatrix} \alpha_1 + \alpha_2 + 2\alpha_3\cos q_2 & \alpha_2 + \alpha_3\cos q_2 \\\\ \alpha_2 + \alpha_3\cos q_2 & \alpha_2 \end{bmatrix}
+$$
 
 **Coriolis/centrifugal terms:**
 
-$$C(q,\dot{q})\,\dot{q} = \alpha_3\sin q_2 \begin{bmatrix}
--2\dot{q}_1\dot{q}_2 - \dot{q}_2^2 \\
-\dot{q}_1^2
-\end{bmatrix}$$
+$$
+C(q,\dot{q})\,\dot{q} = \alpha_3\sin q_2 \begin{bmatrix} -2\dot{q}\_1\dot{q}\_2 - \dot{q}\_2^2 \\\\ \dot{q}\_1^2 \end{bmatrix}
+$$
 
 **Gravitational torques:**
 
-$$G(q) = \begin{bmatrix}
-\beta_1\cos q_1 + \beta_2\cos(q_1+q_2) \\
-\beta_2\cos(q_1+q_2)
-\end{bmatrix}$$
+$$
+G(q) = \begin{bmatrix} \beta_1\cos q_1 + \beta_2\cos(q_1+q_2) \\\\ \beta_2\cos(q_1+q_2) \end{bmatrix}
+$$
 
 ---
 
@@ -127,68 +127,86 @@ The controller operates in two phases:
 
 The total mechanical energy is
 
-$$E(q,\dot{q}) = \tfrac{1}{2}\dot{q}^\top M(q)\,\dot{q} + P(q),
-\qquad P(q) = \beta_1\sin q_1 + \beta_2\sin(q_1+q_2)$$
+$$
+E(q,\dot{q}) = \tfrac{1}{2}\dot{q}^\top M(q)\,\dot{q} + P(q), \qquad P(q) = \beta_1\sin q_1 + \beta_2\sin(q_1+q_2)
+$$
 
 At the upright equilibrium, the energy is $E_r = \beta_1 + \beta_2$.
 
 **Lyapunov function candidate** (Xin & Kaneda, 2007):
 
-$$V = \tfrac{1}{2}(E - E_r)^2 + \tfrac{1}{2}k_D\,\dot{q}_2^2 + \tfrac{1}{2}k_P\,q_2^2$$
+$$
+V = \tfrac{1}{2}(E - E_r)^2 + \tfrac{1}{2}k_D\,\dot{q}\_2^2 + \tfrac{1}{2}k_P\,q_2^2
+$$
 
 where $k_D, k_P > 0$.
 
 **Derivation of the control law.** Differentiating $V$ along trajectories:
 
-$$\dot{V} = (E - E_r)\dot{E} + k_D\,\dot{q}_2\,\ddot{q}_2 + k_P\,q_2\,\dot{q}_2$$
+$$
+\dot{V} = (E - E_r)\dot{E} + k_D\,\dot{q}\_2\,\ddot{q}\_2 + k_P\,q_2\,\dot{q}\_2
+$$
 
-Since $\tau_1 = 0$, the power input satisfies $\dot{E} = \dot{q}_2\,\tau_2$, so
+Since $\tau_1 = 0$, the power input satisfies $\dot{E} = \dot{q}\_2\,\tau_2$, so
 
-$$\dot{V} = \dot{q}_2\bigl[(E - E_r)\,\tau_2 + k_D\,\ddot{q}_2 + k_P\,q_2\bigr]$$
+$$
+\dot{V} = \dot{q}\_2\bigl[(E - E_r)\,\tau_2 + k_D\,\ddot{q}\_2 + k_P\,q_2\bigr]
+$$
 
-Setting the bracketed term equal to $-k_V\dot{q}_2$ (with $k_V > 0$) ensures
+Setting the bracketed term equal to $-k_V\dot{q}\_2$ (with $k_V > 0$) ensures
 
-$$\dot{V} = -k_V\,\dot{q}_2^2 \le 0$$
+$$
+\dot{V} = -k_V\,\dot{q}\_2^2 \le 0
+$$
 
 To express $\ddot{q}_2$ in terms of $\tau_2$, we eliminate $\ddot{q}_1$ from the
 manipulator equation using the first row ($\tau_1 = 0$) and substitute into the
 second row. Defining $\Delta = \det M(q) = M_{11}M_{22} - M_{12}^2$, this yields:
 
-$$\tau_2 = -\frac{(k_V\dot{q}_2 + k_P q_2)\,\Delta
-+ k_D\bigl[M_{21}(H_1+G_1) - M_{11}(H_2+G_2)\bigr]}
-{k_D M_{11} + (E - E_r)\Delta}$$
+$$
+\tau_2 = -\frac{(k_V\dot{q}\_2 + k_P q_2)\,\Delta + k_D\bigl[M_{21}(H_1+G_1) - M_{11}(H_2+G_2)\bigr]}{k_D M_{11} + (E - E_r)\Delta}
+$$
 
 where $H_i = C_i(q,\dot{q})$ are the Coriolis terms.
 
 **Solvability condition.** The denominator must be nonzero for all states.
 This is guaranteed when
 
-$$k_D > \max_{q_2} \frac{\bigl(\sqrt{\beta_1^2 + \beta_2^2 + 2\beta_1\beta_2\cos q_2} + E_r\bigr)\,\Delta(q_2)}{M_{11}(q_2)} \approx 35.74$$
+$$
+k_D > \max_{q_2} \frac{\bigl(\sqrt{\beta_1^2 + \beta_2^2 + 2\beta_1\beta_2\cos q_2} + E_r\bigr)\,\Delta(q_2)}{M_{11}(q_2)} \approx 35.74
+$$
 
 We use $k_D = 35.8$ (margin 0.059).
 
 **Convergence.** By LaSalle's invariance principle, the system converges to the
-largest invariant set within $\{\dot{q}_2 = 0\}$. Generically, all trajectories
+largest invariant set within $\lbrace\dot{q}\_2 = 0\rbrace$. Generically, all trajectories
 (except a measure-zero set) converge to a neighborhood of the upright equilibrium.
 
 ### 3.2 Phase 2 — LQR Stabilization
 
-Once the state is close to the upright, we linearize about $(q_1, q_2, \dot{q}_1, \dot{q}_2) = (\pi/2, 0, 0, 0)$:
+Once the state is close to the upright, we linearize about $(q_1, q_2, \dot{q}\_1, \dot{q}\_2) = (\pi/2, 0, 0, 0)$:
 
-$$\dot{x} = A\,x + B\,u, \qquad x = \begin{bmatrix} q_1 - \pi/2 \\ q_2 \\ \dot{q}_1 \\ \dot{q}_2 \end{bmatrix}$$
+$$
+\dot{x} = A\,x + B\,u, \qquad x = \begin{bmatrix} q_1 - \pi/2 \\\\ q_2 \\\\ \dot{q}\_1 \\\\ \dot{q}\_2 \end{bmatrix}
+$$
 
 where
 
-$$A = \begin{bmatrix} 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \\ -M_{\rm eq}^{-1}\,G_{\rm jac} & 0_{2\times 2} \end{bmatrix}, \qquad
-B = \begin{bmatrix} 0 \\ 0 \\ M_{\rm eq}^{-1}\begin{pmatrix}0\\1\end{pmatrix}\end{bmatrix}$$
+$$
+A = \begin{bmatrix} 0 & 0 & 1 & 0 \\\\ 0 & 0 & 0 & 1 \\\\ -M_{\mathrm{eq}}^{-1}\,G_{\mathrm{jac}} & 0_{2\times 2} \end{bmatrix}, \qquad B = \begin{bmatrix} 0 \\\\ 0 \\\\ M_{\mathrm{eq}}^{-1}\begin{pmatrix}0 \\\\ 1\end{pmatrix}\end{bmatrix}
+$$
 
 The LQR gain $K$ is computed from the continuous algebraic Riccati equation (CARE):
 
-$$A^\top P + P A - P B R^{-1} B^\top P + Q = 0, \qquad K = R^{-1}B^\top P$$
+$$
+A^\top P + P A - P B R^{-1} B^\top P + Q = 0, \qquad K = R^{-1}B^\top P
+$$
 
 with $Q = \mathrm{diag}(10,\,10,\,1,\,1)$ and $R = 5$. The resulting gain is:
 
-$$K = [-238.6,\; -95.6,\; -103.0,\; -48.6]$$
+$$
+K = [-238.6,\; -95.6,\; -103.0,\; -48.6]
+$$
 
 Control law: $u = -K\,x$, clipped to $[-u_{\max}, u_{\max}]$.
 
@@ -197,7 +215,7 @@ Control law: $u = -K\,x$, clipped to $[-u_{\max}, u_{\max}]$.
 The simulation is split into two phases using ODE event detection:
 
 1. Integrate with the energy-based controller.
-2. An event triggers when the weighted state-error norm $\|e\|_w = |e_{q_1}| + |e_{q_2}| + 0.1|\dot{q}_1| + 0.1|\dot{q}_2|$ drops below a threshold $\epsilon = 0.04$.
+2. An event triggers when the weighted state-error norm $\lVert e\rVert_w = |e_{q_1}| + |e_{q_2}| + 0.1|\dot{q}\_1| + 0.1|\dot{q}\_2|$ drops below a threshold $\epsilon = 0.04$.
 3. From that instant, a fresh integration continues with the LQR controller.
 
 This two-phase approach avoids mutable controller state inside the adaptive ODE solver,
@@ -266,7 +284,7 @@ Requires: `numpy`, `scipy`, `matplotlib`.
 
 ### Running
 
-From the `project_1_energy_control_acrobot/` directory:
+From the repository root:
 
 ```bash
 # Full run (plots + animation GIF)
@@ -314,7 +332,7 @@ After the LQR switch, the control effort drops to near zero within a few seconds
 
 The total energy starts at $E_0 \approx -24.1$ J (hanging down) and is driven
 toward $E_r = 24.5$ J (upright). The energy converges monotonically during swing-up,
-consistent with the Lyapunov guarantee $\dot{V} = -k_V\dot{q}_2^2 \le 0$.
+consistent with the Lyapunov guarantee $\dot{V} = -k_V\dot{q}\_2^2 \le 0$.
 After the LQR switch, energy is held constant at $E_r$.
 
 ### 7.4 Tracking Error
@@ -341,7 +359,7 @@ with color encoding the passage of time.
 
 ### Limitations
 
-- The energy-based controller converges slowly near the equilibrium: the Lyapunov derivative $\dot{V} = -k_V\dot{q}_2^2$ vanishes when $\dot{q}_2 \to 0$, requiring the system to pass close to the upright with nonzero elbow velocity to trigger the switch.
+- The energy-based controller converges slowly near the equilibrium: the Lyapunov derivative $\dot{V} = -k_V\dot{q}\_2^2$ vanishes when $\dot{q}\_2 \to 0$, requiring the system to pass close to the upright with nonzero elbow velocity to trigger the switch.
 - The solvability margin is small ($k_D - k_{D,\min} = 0.059$). Larger margins reduce the controller's authority near $E = E_r$, making it harder to reach the switch threshold.
 - The switch threshold must be tuned carefully: too large and LQR saturates and diverges; too small and the energy-based controller never gets close enough.
 
