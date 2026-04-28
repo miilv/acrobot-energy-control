@@ -61,7 +61,7 @@ State vector $x = [q_1, q_2, \dot q_1, \dot q_2]^\top \in \mathbb{R}^4$.
 Equations of motion with friction:
 
 $$
-M(q)\,\ddot q + C(q,\dot q)\,\dot q + G(q) + \begin{bmatrix} 0 \\ b_2 \dot q_2 \end{bmatrix} = \begin{bmatrix} 0 \\ \tau_2 \end{bmatrix}
+M(q)\ddot q + C(q,\dot q)\dot q + G(q) + \begin{bmatrix} 0 \\ b_2 \dot q_2 \end{bmatrix} = \begin{bmatrix} 0 \\ \tau_2 \end{bmatrix}
 $$
 
 with the standard Spong / Xin–Kaneda lumped-parameter forms of $M, C, G$. Only joint 2 is actuated; gravity, Coriolis and friction are entirely known structurally. The unknown is the single scalar $b_2$ that multiplies $\dot q_2$ in the second row of the dynamics.
@@ -77,7 +77,7 @@ The proof structure has nine subsections. We first state the Lyapunov candidate 
 The frictionless Project 1 design is built on
 
 $$
-V_0 \;=\; \tfrac{1}{2}(E - E_r)^2 + \tfrac{1}{2} k_D \dot q_2^{\,2} + \tfrac{1}{2} k_P q_2^{\,2},
+V_0 = \tfrac{1}{2}(E - E_r)^2 + \tfrac{1}{2} k_D \dot q_2^{2} + \tfrac{1}{2} k_P q_2^{2},
 $$
 
 where $E$ is the total mechanical energy and $E_r = \beta_1 + \beta_2$ is its value at the upright equilibrium. Three positive terms penalise three independent error modes: the energy gap, the elbow rate, and the elbow angle.
@@ -85,7 +85,7 @@ where $E$ is the total mechanical energy and $E_r = \beta_1 + \beta_2$ is its va
 For the friction plant we add a quadratic estimation-error term $(\hat b_2 - b_2)^2/(2\gamma)$ to $V_0$:
 
 $$
-V \;=\; V_0 \;+\; \frac{1}{2\gamma}\,(\hat b_2 - b_2)^2 ,\qquad \gamma > 0 .
+V = V_0 + \frac{1}{2\gamma}(\hat b_2 - b_2)^2 ,\qquad \gamma > 0 .
 $$
 
 The single new ingredient is the running estimate $\hat b_2$. The four positive components of $V$ — energy, elbow rate, elbow angle, parameter error — let us reason about state and parameter convergence inside one Lyapunov framework. The choice of $1/(2\gamma)$ as the coefficient is conventional: it makes $\gamma$ play the role of an adaptation gain rather than a Lyapunov-shape parameter.
@@ -95,15 +95,15 @@ The single new ingredient is the running estimate $\hat b_2$. The four positive 
 Differentiating $E = \tfrac{1}{2}\dot q^\top M(q)\dot q + P(q)$ along trajectories of the friction plant gives, after using the manipulator equation to substitute $M\ddot q$ and the skew-symmetry property $\dot q^\top(\dot M - 2C)\dot q = 0$ to cancel two pairs of terms,
 
 $$
-\dot E \;=\; \tau_2\,\dot q_2 \;-\; b_2\,\dot q_2^{\,2}.
+\dot E = \tau_2\dot q_2 - b_2\dot q_2^{2}.
 $$
 
-The identity has only two terms. The first, $\tau_2 \dot q_2$, is the rate at which the actuator does work on the elbow — the only channel through which the controller can influence the energy budget. The second, $-b_2 \dot q_2^{\,2}$, is the friction loss, structurally tied to the elbow rate by a single unknown scalar $b_2$. **Both $\tau_2$ and $b_2 \dot q_2$ act as coefficients of the elbow rate $\dot q_2$ in the energy rate** — friction lies in the actuator's input subspace (the *matching* condition). This is what makes the problem solvable by certainty-equivalence: the controller can compensate friction by adding a feedforward term $\hat b_2 \dot q_2$ on the actuated row.
+The identity has only two terms. The first, $\tau_2 \dot q_2$, is the rate at which the actuator does work on the elbow — the only channel through which the controller can influence the energy budget. The second, $-b_2 \dot q_2^{2}$, is the friction loss, structurally tied to the elbow rate by a single unknown scalar $b_2$. **Both $\tau_2$ and $b_2 \dot q_2$ act as coefficients of the elbow rate $\dot q_2$ in the energy rate** — friction lies in the actuator's input subspace (the *matching* condition). This is what makes the problem solvable by certainty-equivalence: the controller can compensate friction by adding a feedforward term $\hat b_2 \dot q_2$ on the actuated row.
 
 It is convenient for the design to rewrite $\dot E$ in terms of the estimate $\hat b_2$ rather than the true $b_2$:
 
 $$
-\dot E \;=\; \dot q_2\bigl(\tau_2 - \hat b_2 \dot q_2\bigr) \;-\; (b_2 - \hat b_2)\,\dot q_2^{\,2}.
+\dot E = \dot q_2\bigl(\tau_2 - \hat b_2 \dot q_2\bigr) - (b_2 - \hat b_2)\dot q_2^{2}.
 $$
 
 The first piece is the energy rate the controller *thinks* it is producing (it knows $\hat b_2$); the second piece carries the parameter error $\hat b_2 - b_2$. This algebraic split is the lever the rest of the proof rests on.
@@ -113,16 +113,16 @@ The first piece is the energy rate the controller *thinks* it is producing (it k
 Differentiating $V$ along the closed-loop trajectory:
 
 $$
-\dot V \;=\; (E - E_r)\,\dot E + k_D \dot q_2 \ddot q_2 + k_P q_2 \dot q_2 + \frac{\hat b_2 - b_2}{\gamma}\,\dot{\hat b}_2 .
+\dot V = (E - E_r)\dot E + k_D \dot q_2 \ddot q_2 + k_P q_2 \dot q_2 + \frac{\hat b_2 - b_2}{\gamma}\dot{\hat b}_2 .
 $$
 
 Substitute the parameter-error split of $\dot E$ from Section 3.2 and reorganise. The four scalar terms separate into two brackets, one without parameter error and one carrying it as a common factor:
 
 $$
-\dot V \;=\;
+\dot V =
 \dot q_2\Bigl[(E-E_r)\bigl(\tau_2 - \hat b_2 \dot q_2\bigr) + k_D \ddot q_2 + k_P q_2\Bigr]
-\;+\;
-(\hat b_2 - b_2)\Bigl[(E-E_r)\dot q_2^{\,2} + \frac{\dot{\hat b}_2}{\gamma}\Bigr].
++
+(\hat b_2 - b_2)\Bigl[(E-E_r)\dot q_2^{2} + \frac{\dot{\hat b}_2}{\gamma}\Bigr].
 $$
 
 The Lyapunov design now reduces to two independent choices, one per bracket.
@@ -130,7 +130,7 @@ The Lyapunov design now reduces to two independent choices, one per bracket.
 **Choice 1 — Adaptation law.** The right bracket vanishes identically if we choose
 
 $$
-\dot{\hat b}_2 \;=\; -\,\gamma\,(E - E_r)\,\dot q_2^{\,2}.
+\dot{\hat b}_2 = -\gamma(E - E_r)\dot q_2^{2}.
 $$
 
 Three observations. (i) The right-hand side uses only quantities the controller computes from measurements (energy gap and elbow rate); the unknown $b_2$ does not appear. (ii) The sign is correct regardless of whether the estimate is currently above or below the truth — when $E < E_r$ the estimate decreases if $\dot q_2 \neq 0$, when $E > E_r$ it increases. (iii) Whenever the elbow is locked ($\dot q_2 = 0$) or the system is exactly on energy ($E = E_r$), the estimate is frozen. This third property has consequences for parameter convergence; we return to it in Section 3.7.
@@ -138,19 +138,19 @@ Three observations. (i) The right-hand side uses only quantities the controller 
 **Choice 2 — Control law.** With the right bracket eliminated, $\dot V \leq 0$ would follow if we make the left bracket equal $-k_V \dot q_2$ for some $k_V > 0$. To convert that requirement into a closed-form torque, expand $\ddot q_2$ from the manipulator equation. Solving the second row for $\ddot q_2$ after eliminating $\ddot q_1$ via the first row gives
 
 $$
-\ddot q_2 \;=\; \frac{M_{11}}{\Delta}\Bigl(\tau_2 - H_2 - G_2 - \hat b_2 \dot q_2\Bigr) + \frac{M_{21}}{\Delta}\bigl(H_1 + G_1\bigr) ,
+\ddot q_2 = \frac{M_{11}}{\Delta}\Bigl(\tau_2 - H_2 - G_2 - \hat b_2 \dot q_2\Bigr) + \frac{M_{21}}{\Delta}\bigl(H_1 + G_1\bigr) ,
 $$
 
 where $\Delta = M_{11}M_{22} - M_{12}M_{21}$, and we have substituted $\hat b_2$ in place of $b_2$ inside the friction term — this is the certainty-equivalence step, and it is the only place in the derivation where the substitution appears. Plugging this $\ddot q_2$ into the bracket and demanding the bracket equal $-k_V \dot q_2$:
 
 $$
-(E - E_r)\bigl(\tau_2 - \hat b_2 \dot q_2\bigr) + \frac{k_D M_{11}}{\Delta}\,\bigl(\tau_2 - H_2 - G_2 - \hat b_2 \dot q_2\bigr) + \frac{k_D M_{21}}{\Delta}\bigl(H_1+G_1\bigr) + k_P q_2 \;=\; -k_V \dot q_2.
+(E - E_r)\bigl(\tau_2 - \hat b_2 \dot q_2\bigr) + \frac{k_D M_{11}}{\Delta}\bigl(\tau_2 - H_2 - G_2 - \hat b_2 \dot q_2\bigr) + \frac{k_D M_{21}}{\Delta}\bigl(H_1+G_1\bigr) + k_P q_2 = -k_V \dot q_2.
 $$
 
 Collect the $\tau_2$-coefficient on the left, then solve:
 
 $$
-\tau_2 \;=\; -\,\frac{(k_V \dot q_2 + k_P q_2)\,\Delta + k_D\bigl[M_{21}(H_1+G_1) - M_{11}(H_2+G_2 + \hat b_2 \dot q_2)\bigr]}{k_D M_{11} + (E - E_r)\,\Delta}.
+\tau_2 = -\frac{(k_V \dot q_2 + k_P q_2)\Delta + k_D\bigl[M_{21}(H_1+G_1) - M_{11}(H_2+G_2 + \hat b_2 \dot q_2)\bigr]}{k_D M_{11} + (E - E_r)\Delta}.
 $$
 
 This is the certainty-equivalence torque used in `src/controller.py`. Three sanity checks:
@@ -164,28 +164,28 @@ This is the certainty-equivalence torque used in `src/controller.py`. Three sani
 The control law of Section 3.3 is well defined only when the denominator $k_D M_{11} + (E - E_r)\Delta$ is non-zero. Because $\Delta > 0$ and $M_{11} > 0$ everywhere, the denominator can only vanish when $E < E_r$ and $|E - E_r|\Delta$ exceeds $k_D M_{11}$. The worst case at fixed elbow angle is reached when the trajectory has all its energy parked in potential form at the most negative configuration:
 
 $$
-P_{\min}(q_2) \;=\; -\sqrt{\beta_1^{\,2}+\beta_2^{\,2}+2\beta_1\beta_2\cos q_2} ,
+P_{\min}(q_2) = -\sqrt{\beta_1^{2}+\beta_2^{2}+2\beta_1\beta_2\cos q_2} ,
 $$
 
 obtained by extremising $P(q) = \beta_1 \sin q_1 + \beta_2 \sin(q_1+q_2)$ over $q_1$ at fixed $q_2$. Demanding the denominator stay positive at this worst case gives the solvability bound
 
 $$
-k_D \;>\; k_D^{\,\star} \;=\; \max_{q_2 \in [0,2\pi]}\frac{\bigl(\sqrt{\beta_1^{\,2}+\beta_2^{\,2}+2\beta_1\beta_2\cos q_2} + E_r\bigr)\,\Delta(q_2)}{M_{11}(q_2)} .
+k_D > k_D^{\star} = \max_{q_2 \in [0,2\pi]}\frac{\bigl(\sqrt{\beta_1^{2}+\beta_2^{2}+2\beta_1\beta_2\cos q_2} + E_r\bigr)\Delta(q_2)}{M_{11}(q_2)} .
 $$
 
-For our parameters numerical maximisation gives $k_D^{\,\star} \approx 35.74$. We pick $k_D = 35.8$ — just above the bound, large enough for safety, small enough to keep the swing-up brisk. Note that $\hat b_2$ does not appear: the friction estimate enters only the *numerator* of $\tau_2$, never the denominator, so introducing adaptation does not narrow the admissible $k_D$ range.
+For our parameters numerical maximisation gives $k_D^{\star} \approx 35.74$. We pick $k_D = 35.8$ — just above the bound, large enough for safety, small enough to keep the swing-up brisk. Note that $\hat b_2$ does not appear: the friction estimate enters only the *numerator* of $\tau_2$, never the denominator, so introducing adaptation does not narrow the admissible $k_D$ range.
 
 ### 3.5 Closed-loop stability theorem
 
 Combining the previous two subsections, with the control law and adaptation law substituted into the Lyapunov derivative,
 
 $$
-\dot V \;=\; -\,k_V\,\dot q_2^{\,2} \;\leq\; 0.
+\dot V = -k_V\dot q_2^{2} \leq 0.
 $$
 
 **Theorem (closed-loop dissipation).** Along every trajectory of the friction plant in closed loop with the certainty-equivalence controller and adaptation law of Section 3.3, the augmented Lyapunov function $V$ is non-increasing, and strictly decreasing whenever the elbow is moving. Each of the four squared error quantities — $|E - E_r|$, $|\dot q_2|$, $|q_2|$, $|\hat b_2 - b_2|$ — is bounded for all time by its initial value (in the energy-error norm $\sqrt{2V}$).
 
-**Proof.** The control law of Section 3.3 was constructed precisely so that the left bracket of the V̇-decomposition equals $-k_V \dot q_2$; the adaptation law was constructed so that the right bracket vanishes. Substituting both into the decomposition gives $\dot V = \dot q_2 \cdot (-k_V \dot q_2) + 0 = -k_V \dot q_2^{\,2}$. Since $k_V > 0$ and $\dot q_2^{\,2} \geq 0$, $\dot V \leq 0$. Since $V \geq 0$ and $\dot V \leq 0$, $V(t) \leq V(0)$ for all $t \geq 0$. The sub-level set $\{V \leq V(0)\}$ has each squared component bounded by $2 V(0)$ (or $2\gamma V(0)$ for the parameter-error component), establishing boundedness. $\square$
+**Proof.** The control law of Section 3.3 was constructed precisely so that the left bracket of the V̇-decomposition equals $-k_V \dot q_2$; the adaptation law was constructed so that the right bracket vanishes. Substituting both into the decomposition gives $\dot V = \dot q_2 \cdot (-k_V \dot q_2) + 0 = -k_V \dot q_2^{2}$. Since $k_V > 0$ and $\dot q_2^{2} \geq 0$, $\dot V \leq 0$. Since $V \geq 0$ and $\dot V \leq 0$, $V(t) \leq V(0)$ for all $t \geq 0$. The sub-level set $\{V \leq V(0)\}$ has each squared component bounded by $2 V(0)$ (or $2\gamma V(0)$ for the parameter-error component), establishing boundedness. $\square$
 
 The theorem rules out divergence: the energy gap, the elbow motion, and the parameter error cannot grow without bound. What it does *not* yet establish is that the trajectory reaches the upright — only that it stays in a bounded set. To get state convergence we apply LaSalle.
 
@@ -194,10 +194,10 @@ The theorem rules out divergence: the energy gap, the elbow motion, and the para
 By LaSalle's invariance principle the trajectory converges to the largest invariant set $\Omega$ contained in $\{\dot V = 0\} = \{\dot q_2 = 0\}$. Since the trajectory remains on $\Omega$, where $\dot q_2$ is identically zero, its time derivative is also zero: $\ddot q_2 \equiv 0$ on $\Omega$. Substituting $\dot q_2 = 0$ and $\ddot q_2 = 0$ into the second row of the manipulator equation,
 
 $$
-M_{21}\,\ddot q_1 + H_2 + G_2 \;=\; \tau_2 \quad\text{on }\Omega ,
+M_{21}\ddot q_1 + H_2 + G_2 = \tau_2 \quad\text{on }\Omega ,
 $$
 
-with $H_2 = \alpha_3\,\dot q_1^{\,2}\sin q_2^*$, $G_2 = \beta_2\cos(q_1+q_2^*)$, and $q_2^* := q_2|_\Omega$ a constant.
+with $H_2 = \alpha_3\dot q_1^{2}\sin q_2^*$, $G_2 = \beta_2\cos(q_1+q_2^*)$, and $q_2^* := q_2|_\Omega$ a constant.
 
 Two qualitatively different cases close the row consistently:
 
@@ -213,15 +213,15 @@ In words: a transverse perturbation of the elbow at $t=0$ keeps the trajectory o
 
 Section 3.6 establishes state convergence to the upright; it does not establish parameter convergence to the true friction. The reason is visible in the adaptation law: at the upright, $\dot q_2 \equiv 0$ implies $\dot{\hat b}_2 \equiv 0$, so the estimate stalls at whatever value it carried into the equilibrium.
 
-In CE adaptive control parameter convergence requires a *persistence of excitation* (PE) condition on the regressor that multiplies the unknown parameter — here $\dot q_2^{\,2}$. Roughly: there must exist constants $\alpha > 0$ and $T > 0$ such that for every interval of length $T$,
+In CE adaptive control parameter convergence requires a *persistence of excitation* (PE) condition on the regressor that multiplies the unknown parameter — here $\dot q_2^{2}$. Roughly: there must exist constants $\alpha > 0$ and $T > 0$ such that for every interval of length $T$,
 
 $$
-\int_t^{t+T} \dot q_2(\sigma)^{\,2}\,d\sigma \;\geq\; \alpha .
+\int_t^{t+T} \dot q_2(\sigma)^{2}d\sigma \geq \alpha .
 $$
 
 The upright equilibrium violates PE by definition — once the trajectory locks at $\dot q_2 \approx 0$, no further information about $b_2$ enters the estimator. The asymptotic value $\hat b_2(\infty)$ therefore depends on the *swing-up transient*, not on the true $b_2$.
 
-Empirically (Section 7.3) the trajectory delivers $\hat b_2(\infty) \approx 1.58$ when $b_2 = 1.5$ — a 5 % over-estimate. This is consistent with the structural argument: the last few oscillations before LQR takeover push energy slightly above $E_r$ and bias the estimate upward by an amount controlled by $\gamma$ and the dwell time near the threshold. A projection $\hat b_2 \in [0, b_{\max}]$ or a $\sigma$-modification $\dot{\hat b}_2 = -\gamma(E-E_r)\dot q_2^{\,2} - \sigma\hat b_2$ would tighten this bias at the cost of complicating the proof. We have not added either modification in this submission.
+Empirically (Section 7.3) the trajectory delivers $\hat b_2(\infty) \approx 1.58$ when $b_2 = 1.5$ — a 5 % over-estimate. This is consistent with the structural argument: the last few oscillations before LQR takeover push energy slightly above $E_r$ and bias the estimate upward by an amount controlled by $\gamma$ and the dwell time near the threshold. A projection $\hat b_2 \in [0, b_{\max}]$ or a $\sigma$-modification $\dot{\hat b}_2 = -\gamma(E-E_r)\dot q_2^{2} - \sigma\hat b_2$ would tighten this bias at the cost of complicating the proof. We have not added either modification in this submission.
 
 ### 3.8 Why an unadapted controller cannot succeed
 
@@ -230,29 +230,29 @@ The adaptive design is justified by contrast with the alternative: applying the 
 **Step 1 — Lyapunov derivative is contaminated.** Substituting $\tau_2^{\mathsf P}$ into the energy identity of Section 3.2 and into the time derivative of $V_0$ (the Project 1 Lyapunov function),
 
 $$
-\dot V_0 \;=\; -k_V \dot q_2^{\,2} \;-\; (E - E_r)\,b_2\,\dot q_2^{\,2}.
+\dot V_0 = -k_V \dot q_2^{2} - (E - E_r)b_2\dot q_2^{2}.
 $$
 
-The frictionless dissipation $-k_V \dot q_2^{\,2}$ is contaminated by the term $-(E-E_r)b_2 \dot q_2^{\,2}$. While the swing-up is in progress and $E < E_r$, the contamination has *positive* sign. There is no fixed-sign Lyapunov decrement, and the Project 1 stability proof does not extend. This is the structural reason "just keep the Project 1 controller and hope" cannot work.
+The frictionless dissipation $-k_V \dot q_2^{2}$ is contaminated by the term $-(E-E_r)b_2 \dot q_2^{2}$. While the swing-up is in progress and $E < E_r$, the contamination has *positive* sign. There is no fixed-sign Lyapunov decrement, and the Project 1 stability proof does not extend. This is the structural reason "just keep the Project 1 controller and hope" cannot work.
 
 **Step 2 — Steady-state energy gap.** Suppose, for contradiction, that the closed-loop trajectory converges to the upright. Then in the asymptotic regime $E(t) \to E_r$ and $\dot q(t) \to 0$. Time-integrating the energy identity over $[T, \infty)$ for sufficiently large $T$,
 
 $$
-E(\infty) - E(T) \;=\; \int_T^\infty \tau_2^{\mathsf P}(t)\,\dot q_2(t)\,dt \;-\; b_2 \int_T^\infty \dot q_2(t)^{\,2}\,dt .
+E(\infty) - E(T) = \int_T^\infty \tau_2^{\mathsf P}(t)\dot q_2(t)dt - b_2 \int_T^\infty \dot q_2(t)^{2}dt .
 $$
 
-The friction integral on the right is non-negative. The pumping integral has $\tau_2^{\mathsf P}\dot q_2$ as integrand, and inspection of the controller formula with $\hat b_2 = 0$ near the target shows $\tau_2^{\mathsf P}\,\dot q_2 = O(|E-E_r|\cdot\dot q_2^{\,2}) + O(q_2 \dot q_2)$ — both factors vanish as the state approaches the upright, so the pumping integral converges to a value strictly smaller in magnitude than the friction integral. This is incompatible with $E(\infty) = E_r$ unless the friction integral itself is zero, which would require $\dot q_2(t) \equiv 0$ for $t \geq T$. But $\dot q_2 \equiv 0$ reduces the system to a one-degree-of-freedom conservative pendulum in $q_1$ (the unactuated row gives $M_{11}\ddot q_1 = -H_1 - G_1$ with no dissipation), whose energy is preserved; combined with $E \to E_r$ and $\dot q \to 0$, this would force $(q_1, \dot q_1) \to (\pi/2, 0)$. But $q_1 = \pi/2$ is an unstable equilibrium of the reduced system, unreachable in finite or asymptotic time from a non-equilibrium start. Contradiction.
+The friction integral on the right is non-negative. The pumping integral has $\tau_2^{\mathsf P}\dot q_2$ as integrand, and inspection of the controller formula with $\hat b_2 = 0$ near the target shows $\tau_2^{\mathsf P}\dot q_2 = O(|E-E_r|\cdot\dot q_2^{2}) + O(q_2 \dot q_2)$ — both factors vanish as the state approaches the upright, so the pumping integral converges to a value strictly smaller in magnitude than the friction integral. This is incompatible with $E(\infty) = E_r$ unless the friction integral itself is zero, which would require $\dot q_2(t) \equiv 0$ for $t \geq T$. But $\dot q_2 \equiv 0$ reduces the system to a one-degree-of-freedom conservative pendulum in $q_1$ (the unactuated row gives $M_{11}\ddot q_1 = -H_1 - G_1$ with no dissipation), whose energy is preserved; combined with $E \to E_r$ and $\dot q \to 0$, this would force $(q_1, \dot q_1) \to (\pi/2, 0)$. But $q_1 = \pi/2$ is an unstable equilibrium of the reduced system, unreachable in finite or asymptotic time from a non-equilibrium start. Contradiction.
 
 **Step 3 — Quantitative gap.** In a sustained limit cycle around mean energy $E_\infty$, the time-averaged energy balance $\langle\dot E\rangle = 0$ gives
 
 $$
-\langle \tau_2^{\mathsf P}\,\dot q_2\rangle \;=\; b_2\,\langle \dot q_2^{\,2}\rangle .
+\langle \tau_2^{\mathsf P}\dot q_2\rangle = b_2\langle \dot q_2^{2}\rangle .
 $$
 
-Using the leading-order behaviour of $\tau_2^{\mathsf P}$ near the threshold, the left-hand side scales as $|E_\infty - E_r| \cdot \langle\dot q_2^{\,2}\rangle \cdot \Delta/(k_D M_{11})$, so
+Using the leading-order behaviour of $\tau_2^{\mathsf P}$ near the threshold, the left-hand side scales as $|E_\infty - E_r| \cdot \langle\dot q_2^{2}\rangle \cdot \Delta/(k_D M_{11})$, so
 
 $$
-|E_\infty - E_r| \;\gtrsim\; \frac{b_2\,k_D M_{11}}{\Delta} .
+|E_\infty - E_r| \gtrsim \frac{b_2k_D M_{11}}{\Delta} .
 $$
 
 For our parameters $b_2 = 1.5$, $k_D = 35.8$, and the ratio $M_{11}/\Delta$ ranges over approximately $[2,5]$ during the swing trajectory. The bound predicts $|E_\infty - E_r|$ on the order of a few joules. Simulation gives $E_\infty \approx 21.8$ J for $E_r = 24.5$ J — a gap of $\approx 2.7$ J, **in agreement with the analytical lower bound**.
@@ -268,7 +268,7 @@ Once the state enters the basin of attraction of the upright equilibrium the swi
 Switch from adaptive swing-up to LQR when
 
 $$
-|q_1 - \pi/2| + |q_2| + 0.1\,|\dot q_1| + 0.1\,|\dot q_2| \;<\; 0.06,
+|q_1 - \pi/2| + |q_2| + 0.1|\dot q_1| + 0.1|\dot q_2| < 0.06,
 $$
 
 hysteretic (one-way). Once switched, the LQR holds the system at the upright; $\hat b_2$ is frozen at its hand-over value.
@@ -329,7 +329,7 @@ Outputs:   trajectories t, q1, q2, dq1, dq2, u, E, V, b_hat
 | Switch threshold (friction) | $\varepsilon$ | 0.06 |
 | LQR cost diag | $Q$ | (15, 15, 2, 2) |
 | LQR cost input | $R$ | 1 |
-| Initial state | $x_0$ | $(-1.4,\,0.001,\,0,\,0)$ |
+| Initial state | $x_0$ | $(-1.4,0.001,0,0)$ |
 | Simulation time | $t_f$ | 30 s |
 | Integrator | RK45 | rtol = atol = $10^{-8}$, max step 5 ms |
 
